@@ -161,7 +161,7 @@ def session_time_left_pct(sess: int, hhmm: int, cfg: EAConfig) -> float:
 def clamp_sl_dist(dist: float, atr1: float, cfg: EAConfig) -> float:
     """SSS_ClampSLDist(). NB: below the min it falls back to ATR*mult, which can still be < min."""
     if dist < cfg.p(cfg.sl_min_pts):
-        dist = atr1 * cfg.sl_atr_fallback_mult
+        dist = cfg.p(cfg.sl_min_pts) if cfg.sl_min_enforced else atr1 * cfg.sl_atr_fallback_mult
     if dist > cfg.p(cfg.sl_max_pts):
         dist = cfg.p(cfg.sl_max_pts)
     return dist
@@ -537,7 +537,7 @@ def run_ea(m: Market, cfg: EAConfig, candidates):
             status[t] = "out_of_session"
 
         # --- Reject + Rebound (runs every bar while in a session, NOT gated by session_traded) ---
-        if cfg.rebound_enabled and sess > 0 and open_orders(dbar) < cfg.max_orders:
+        if cfg.rebound_enabled and not cfg.rebound_trades_disabled and sess > 0 and open_orders(dbar) < cfg.max_orders:
             for ss in range(3, max_lb_rr + 1):
                 k = t - ss + 1
                 if k < 0 or m.sig[k] == 0:

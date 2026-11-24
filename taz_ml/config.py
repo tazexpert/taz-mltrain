@@ -80,6 +80,10 @@ class EAConfig:
     # --- Guards ---
     vol_breaker: float = 2.0             # Guard 3 (H1 ATR)
 
+    # --- What-if switches (False/False = EA v7.22 behaviour) ---
+    rebound_trades_disabled: bool = False  # keep the S/R filter but never open Reject+Rebound orders
+    sl_min_enforced: bool = False          # SSS_ClampSLDist: use max(dist, min SL) instead of ATR fallback
+
     # --- Simulation ---
     max_hold_bars: int = 288 * 3         # Force-close after N M5 bars (3 days) if nothing hit
 

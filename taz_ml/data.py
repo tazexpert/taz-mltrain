@@ -47,6 +47,8 @@ def load_m5_csv(path: str) -> pd.DataFrame:
         else:
             raise ValueError(f"Unrecognised CSV layout with {n} columns: {first!r}")
 
+    if "datetime" not in df.columns and "date" not in df.columns and "time" in df.columns:
+        df = df.rename(columns={"time": "datetime"})  # single "time" column holding date + time
     if "datetime" not in df.columns:
         if "date" not in df.columns or "time" not in df.columns:
             raise ValueError(f"CSV needs Date+Time or a datetime column, got {list(df.columns)}")
